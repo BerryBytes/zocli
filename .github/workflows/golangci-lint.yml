@@ -10,6 +10,7 @@ on:
       - refactor/**
       - test/**
       - develop
+      - main
 
 jobs:
   lint:
