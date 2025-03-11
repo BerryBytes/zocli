@@ -38,7 +38,7 @@ fi
 OS_NAME=$(uname -s)
 VERSION=${1:-latest}  # Accept version as an argument, default to 'latest' if not provided
 if [ "$OS_NAME" = "Darwin" ]; then
-  if curl -s --connect-timeout 20 --max-time 120 "https://github.com/berrybytes/zocli/releases/${VERSION}/download/zocli-darwin-$ARCH" -o $HOME/.01cloud/zocli; then
+  if curl -L "https://github.com/berrybytes/zocli/releases/${VERSION}/download/zocli-Darwin-$ARCH" -o $HOME/.01cloud/zocli; then
     kill "$!" 2>/dev/null
     echo ""
     echo "Download completed"
@@ -48,7 +48,7 @@ if [ "$OS_NAME" = "Darwin" ]; then
     exit 1
   fi
 elif [ "$OS_NAME" = "Linux" ]; then
-  if curl -s --connect-timeout 20 --max-time 120 "https://github.com/berrybytes/zocli/releases/${VERSION}/download/zocli-linux-$ARCH" -o $HOME/.01cloud/zocli; then
+  if curl -L "https://github.com/berrybytes/zocli/releases/${VERSION}/download/zocli-Linux-$ARCH" -o $HOME/.01cloud/zocli; then
     kill "$!" 2>/dev/null
     echo ""
     echo "Download completed"
@@ -57,6 +57,11 @@ elif [ "$OS_NAME" = "Linux" ]; then
     echo "Downloading failed. Check your internet connection."
     exit 1
   fi
+elif ["$OS_NAME" = "Windows"]; then
+  kill "$!" 2>/dev/null
+  echo "Direct installer for windows is not yet supported: Check GITHUB RELEASES for manual installation"
+  echo "RELEASES: https://github.com/BerryBytes/zocli/releases"
+  exit 1
 else
     kill "$!" 2>/dev/null
     echo "Unsupported operating system: $OS_NAME"
