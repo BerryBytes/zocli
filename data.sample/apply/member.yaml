@@ -1,0 +1,9 @@
+---
+apiVersion: app.01cloud.io/v1
+kind: member
+metadata:
+  id: 181
+  name: members
+spec:
+  email: suresh.thapa@berrybytes.com
+  role: admin
