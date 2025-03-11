@@ -48,7 +48,7 @@ if [ "$OS_NAME" = "Darwin" ]; then
     exit 1
   fi
 elif [ "$OS_NAME" = "Linux" ]; then
-  if curl -sS -L "https://github.com/berrybytes/zocli/releases/${VERSION}}/download/zocli_Linux_${ARCH}" -o $HOME/.01cloud/zocli; then
+  if curl -sS -L "https://github.com/berrybytes/zocli/releases/${VERSION}/download/zocli_Linux_${ARCH}" -o $HOME/.01cloud/zocli; then
     kill "$!" 2>/dev/null
     echo ""
     echo "Download completed"
