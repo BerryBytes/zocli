@@ -48,12 +48,12 @@ You can also install ZOCLI directly using the following command:
 
 1. To install the latest version.
 ```bash
-curl -sS https://raw.githubusercontent.com/BerryBytes/zocli/main/install.sh | bash
+curl -sS https://raw.githubusercontent.com/BerryBytes/zocli/main/installer.sh | bash
 ```
 
 2. To install a specific version (e.g., `v0.0.2`):
 ```bash
-curl -sS https://raw.githubusercontent.com/BerryBytes/zocli/main/install.sh | bash -s -- v0.0.2
+curl -sS https://raw.githubusercontent.com/BerryBytes/zocli/main/installer.sh | bash -s -- v0.0.2
 ```
 
 ### Usage
