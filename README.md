@@ -85,3 +85,19 @@ We welcome contributions! Please see our [contributing guidelines](CONTRIBUTING.
 
 ## Releasing
 To trigger a release, push a commit to `main` with `[release]` in the commit message (e.g., `git commit -m "Add feature [release]"`). The workflow will auto-increment the version, tag it, and create a draft release.
+
+---
+### Coming Features
+
+1. **Temporary Bash Session**
+
+    Details: A feature to allow temporary bash sessions for troubleshooting and debugging.
+    Status: Upcoming plans are in place, and documentation will be updated with a roadmap and timeline.
+    Benefit: Enhanced debugging capabilities for users.
+
+
+2. **Append Feature for Project Variables**
+
+    Details: An --append flag will be added to zocli p settings vars add to allow adding new variables without replacing existing ones.
+    Status: Planned for the next release, pending API integration for variable management.
+    Benefit: Prevents accidental overwriting of project variables and improves flexibility.

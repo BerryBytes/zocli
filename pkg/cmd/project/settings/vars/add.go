@@ -40,9 +40,15 @@ func NewProjectVarsAddCommand(f *factory.Factory) *cobra.Command {
 }
 
 func (o *Opts) AddVarsRunner(_ *cobra.Command, _ []string) {
+	o.checkProjectID()
+	project := o.getProjectDetail(o.ID)
+	if project == nil {
+		o.F.Printer.Fatal(1, "project not found")
+		return
+	}
+	o.AllVars = project.Variables
 	o.F.Printer.Printf("NOTE: WARNING THIS COMMAND REPLACES ALL THE VARIABLES ON THE PROJECT AND CANNOT BE UNDONE")
 	utils.ConfirmIfToProceed("Do you sure want to continue?", o.F)
-	o.checkProjectID()
 	o.checkVarName()
 	o.checkVarValue()
 	o.checkVarType()
