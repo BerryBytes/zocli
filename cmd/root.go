@@ -11,6 +11,7 @@ import (
 	"github.com/berrybytes/zocli/pkg/cmd/project"
 	"github.com/berrybytes/zocli/pkg/utils/factory"
 	"github.com/berrybytes/zocli/pkg/utils/fs"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +28,7 @@ func RootCmdRunE(cmd *cobra.Command, _ []string) error {
 	version, _ := cmd.Flags().GetBool("version")
 
 	if version {
-		//printer.Print(grammar.Version)
+		logrus.Print(grammar.Version)
 		return nil
 	}
 

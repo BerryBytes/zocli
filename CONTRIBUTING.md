@@ -28,3 +28,11 @@ If you’re passionate about zocli and want to become a maintainer, check out th
 ### **Together, We Build Better**
 
 Your contributions help make zocli better for everyone. We appreciate your support and look forward to your contributions!
+
+---
+### Contributors
+- [Mousam Dahal](https://github.com/leodahal4)
+- [Rajiv Gopal Singh](https://github.com/rajivgs)
+- [Laxmikanth Kande](https://github.com/laxmikanthk)
+- [Bishal Singh](https://github.com/bsalpsingh)
+- [Konika Sitoula](https://github.com/konika-sitoula)

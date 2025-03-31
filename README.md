@@ -60,23 +60,17 @@ curl -sS https://raw.githubusercontent.com/BerryBytes/zocli/main/installer.sh | 
 
 Start with `zocli --help` to get started. Here is an example of logging in:
 ```bash
-zocli login
+zocli auth login
 ```
 
 **NOTE: Manuals for using this application will be updated in the near future.**
 
 ### Commands
-For detailed command information, you can browse the [Zocli Documentation](https://docs.01cloud.io/services/cli/quickstart_cli/).
+For detailed command information, you can browse the [Zocli Documentation](https://docs.01cloud.io/services/cli/).
 
 ### Examples
 ```bash
-zocli login
-```
-```bash
-zocli create project
-```
-```bash
-zocli create app
+zocli auth login
 ```
 
 ### Contributing
