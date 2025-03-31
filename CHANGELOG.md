@@ -1,0 +1,17 @@
+##  (2025-03-31)
+
+* Fixes release for contributors and docs [release] (bb1ca16)
+* feat: add contributors list and update CLI to version 1.0.1 (b7621cf)
+* Initial release [release] (096a29b)
+* fix(feedbacks): Modified check_logged_in.go to remove old auth file and confirm logout from previous session on re-login. - Improved add.go to fetch project details before variable addition and preserve existing variables. - Updated README.md with "Coming Features" section detailing Temporary Bash Session and Append Feature for Project Variables. - Add upcoming features to README and enhance zocli functionality Changes to be committed:       modified:   README.md       modified:   pkg/cmd/auth/login/check_logged_in.go       modified:   pkg/cmd/project/settings/vars/add.go (d7a5c4e)
+* fix(README.md): install.sh is now renamed to installer.sh Changes to be committed:       modified:   README.md (65ba73e)
+* fix(installer): extra } on installer.sh is now removed for installation using script Changes to be committed:       modified:   installer.sh (7e647fd)
+* Initial release [release] (4392467)
+* fix(installer): installer script fix for version and tag Changes to be committed:       modified:   installer.sh (44d5ba9)
+* Initial release [release] (9ccc4bf)
+* feat: Enhance GoReleaser config and installer script for consistent naming and Windows support (77ce7df)
+* Test release [release] (5679803)
+* fix(golangci-lint): now the linter will also run on the main branch Changes to be committed:       modified:   .github/workflows/golangci-lint.yml (dbdf845)
+* feat(init): Initialize zocli project with core functionality, CI/CD, and documentation (f6ad6f2)
+* Initial commit (88b548c)
+
