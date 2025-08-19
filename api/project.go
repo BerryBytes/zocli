@@ -86,7 +86,7 @@ type Subscription struct {
 	CronJob        int       `json:"cron_job"`
 	Backups        int       `json:"backups"`
 	LoadBalancer   int       `json:"load_balancer"`
-	PriceList      []Price   `json:"price_list"`
+	PriceList      *Price   `json:"price_list"`
 }
 
 type Price struct {
