@@ -69,8 +69,7 @@ func TestValidCodeReceived(t *testing.T) {
 
 func TestBrowserFlow(t *testing.T) {
 	opts := Opts{
-		F:         mockfactory.NewFactory(),
-		WithCreds: true,
+		F: mockfactory.NewFactory(),
 	}
 
 	ctrl := gomock.NewController(t)

@@ -4,11 +4,47 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"gopkg.in/yaml.v3"
+	"os"
 
 	"github.com/berrybytes/zocli/api"
 	"github.com/berrybytes/zocli/pkg/utils/requester/defaults"
 )
 
+// GetAuth0Token returns the stored Auth0Token for reuse in other functions
+func (l *Opts) GetAuth0Token() string {
+	return l.Auth0Token
+}
+
+// loadDetails loads user configuration from the YAML file
+func (l *Opts) loadDetails() error {
+	data, err := os.ReadFile(l.F.Config.ConfigFolder + l.F.Config.AuthFile)
+	if err != nil {
+		return err
+	}
+
+	var save SaveConfig
+	if err := yaml.Unmarshal(data, &save); err != nil {
+		return err
+	}
+
+	l.Auth0Token = save.Auth0Token
+	l.F.Auth0Token = save.Auth0Token // Store in Factory for use in GetAuth
+	l.F.UserAuthToken = save.AuthToken
+	l.F.UserWebToken = save.WebToken
+	l.F.UserEmail = save.Email
+	l.LoginResponse = &api.LoginResponse{
+		Data: api.Data{
+			User: api.User{
+				Email: save.Email,
+				Id:    save.ID,
+			},
+			AuthToken: save.AuthToken,
+			WebToken:  save.WebToken,
+		},
+	}
+	return nil
+}
 // browserFlow
 //
 // this function is responsible for fetching a one-time code from the server
@@ -67,12 +103,15 @@ func (l *Opts) checkSSOCodeStatus() {
 	l.F.Printer.Print("Waiting for code status.")
 	for {
 		time.Sleep(1 * time.Second)
+		
 		l.F.Printer.Print(".")
 
 		body := []byte(`{"code": "` + l.SsoCode + `"}`)
 		reqConf := defaults.RequestSSOStatus(l.F, map[string]interface{}{"body": body})
 
 		baseRes := reqConf.Request()
+		l.F.Printer.Printf("Received server response: %s\n", baseRes.Data)
+
 		if baseRes.Message != "Success" {
 			time.Sleep(4 * time.Second)
 			continue
@@ -83,9 +122,10 @@ func (l *Opts) checkSSOCodeStatus() {
 	}
 }
 
+
 // gotCodeStatus
-//
 // this function is called after the sso code status returns the token as response.
+
 func (l *Opts) gotCodeStatus(baseRes *api.BaseResponse) {
 	var data api.Data
 	err := data.FromJson(baseRes.Data)
@@ -93,7 +133,11 @@ func (l *Opts) gotCodeStatus(baseRes *api.BaseResponse) {
 		l.F.Printer.Fatal(9, err.Error())
 	}
 
-	headers := map[string]string{"Authorization": "basic " + data.AuthToken}
+	l.Auth0Token = data.Auth0Token
+	l.F.Auth0Token = data.Auth0Token
+
+
+	headers := map[string]string{"Authorization": "basic " + data.AuthToken, "X-CUSTOM-AUTH":data.Auth0Token}
 	reqConf := defaults.Profile(l.F, map[string]interface{}{"headers": headers})
 
 	res := reqConf.Request()
@@ -111,6 +155,11 @@ func (l *Opts) gotCodeStatus(baseRes *api.BaseResponse) {
 			},
 		},
 	}
+	
+	// Update Factory fields
+	l.F.UserEmail = profile.User.Email
+	l.F.UserAuthToken = data.AuthToken
+	l.F.UserWebToken = data.WebToken
 
 	// switch the organization, so we can get new token
 	reqConf = defaults.SwitchOrganization(l.F, map[string]interface{}{"headers": headers})
@@ -119,6 +168,7 @@ func (l *Opts) gotCodeStatus(baseRes *api.BaseResponse) {
 	var orgSwitch api.OrganizationSwitch
 	err = orgSwitch.FromJson(res.Data)
 	l.LoginResponse.AuthToken = orgSwitch.Token
+	l.F.UserAuthToken = orgSwitch.Token
 	if err != nil {
 		l.F.Printer.Fatal(9, "cannot unmarshal")
 		return

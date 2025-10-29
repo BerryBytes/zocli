@@ -21,6 +21,7 @@ type Data struct {
 	AuthToken string `json:"token" yaml:"token"`
 	User      User   `json:"user" yaml:"user"`
 	WebToken  string `json:"personalToken" yaml:"personalToken"`
+	Auth0Token	  string `json:"auth0_token" yaml:"auth0_token"`
 }
 
 func (d *Data) FromJson(a interface{}) error {

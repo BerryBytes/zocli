@@ -12,20 +12,16 @@ import (
 	"github.com/berrybytes/zocli/pkg/utils/globalparser"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
 
 type Opts struct {
 	WebToken  string
-	Email     string
-	Password  string
 	AuthToken string
 	SsoCode   string
 	F         *factory.Factory // f is the factory used for creating objects.
 
 	WithToken   bool
-	WithCreds   bool
 	WithBrowser bool
 
 	global *globalparser.GlobalFlags
@@ -33,16 +29,18 @@ type Opts struct {
 	LoginResponse *api.LoginResponse
 	Response      []byte
 	cmd           *cobra.Command
+	Auth0Token    string
 }
 
 // SaveConfig
 //
 // struct used to save the user's credentials.
 type SaveConfig struct {
-	Email     string `yaml:"email"`
-	AuthToken string `yaml:"token"`
-	ID        int    `yaml:"id"`
-	WebToken  string `yaml:"xpersonaltoken"`
+	Email      string `yaml:"email"`
+	AuthToken  string `yaml:"token"`
+	ID         int    `yaml:"id"`
+	WebToken   string `yaml:"xpersonaltoken"`
+	Auth0Token string `yaml:"auth0_token"`
 }
 
 // NewLoginCommand
@@ -60,23 +58,9 @@ func NewLoginCommand(f *factory.Factory) *cobra.Command {
 		RunE:                  opts.checkArgs,
 	}
 
-	login.PersistentFlags().BoolVarP(&opts.WithToken, "token", "t", false, "BOOL Auth token for your account")
 	login.PersistentFlags().BoolVarP(&opts.WithBrowser, "sso", "s", false, "use browser to login")
-	login.PersistentFlags().BoolVarP(&opts.WithCreds, "basic", "b", false, "BOOL use email and password to authenticate")
-
-	// add a new flag set but mark it as hidden
-	// as this approach is not recommended
-	newToken := pflag.NewFlagSet("not recommended", pflag.ExitOnError)
-	newToken.StringVarP(&opts.WebToken, "tokenVal", "T", "", "Token")
-	newToken.StringVarP(&opts.Email, "email", "U", "", "Email")
-	newToken.StringVarP(&opts.Password, "password", "P", "", "Password")
-
-	newToken.VisitAll(func(flag *pflag.Flag) {
-		flag.Hidden = true
-	})
 
 	login.Example = grammar.LoginExample
-	login.Flags().AddFlagSet(newToken)
 	opts.cmd = login
 	return login
 }
@@ -109,12 +93,14 @@ func (l *Opts) saveDetails() error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
 	var save SaveConfig
 	save.Email = l.LoginResponse.Data.User.Email
 	save.AuthToken = l.LoginResponse.Data.AuthToken
 	save.ID = l.LoginResponse.Data.User.Id
 	save.WebToken = l.LoginResponse.WebToken
+	save.Auth0Token = l.Auth0Token
 
 	yamlF, err := yaml.Marshal(save)
 	if err != nil {
