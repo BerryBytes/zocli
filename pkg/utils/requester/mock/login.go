@@ -8,34 +8,9 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/berrybytes/zocli/api"
 )
-
-type loginReq struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func Login(req *http.Request) (*http.Response, error) {
-	var newUser loginReq
-
-	err := json.NewDecoder(req.Body).Decode(&newUser)
-	if err != nil {
-		return &http.Response{StatusCode: 500}, errors.New("internal server error")
-	}
-
-	if newUser.Password == "" {
-		return &http.Response{StatusCode: 400}, errors.New("required Password")
-	}
-	if !strings.Contains(newUser.Email, "@") {
-		return &http.Response{StatusCode: 400}, errors.New("invalid email")
-	}
-
-	return successResponse()
-}
 
 func TokenLogin(req *http.Request) (*http.Response, error) {
 	token := req.Header.Get("X-PERSONAL-TOKEN")
@@ -86,24 +61,6 @@ func SSOStatus(req *http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-func successResponse() (*http.Response, error) {
-	send := api.BaseResponse{
-		Success: 1,
-		Message: "success",
-		Data: api.Data{
-			AuthToken: "newTokenGenerated" + strconv.Itoa(rand.Int()),
-			User: api.User{
-				Id:    rand.Int(),
-				Email: "testmail@mail.com",
-			},
-		},
-	}
-	r, err := json.Marshal(send)
-	if err != nil {
-		return &http.Response{StatusCode: 500}, errors.New("internal server error")
-	}
-	return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(r))}, nil
-}
 func ssoSuccessResponse() (*http.Response, error) {
 	send := api.BaseResponse{
 		Success: 1,

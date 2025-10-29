@@ -7,10 +7,6 @@ var AuthHelp = heredoc.Doc(`
 	Choose any of the subcommands to proceed on.
 `)
 
-var WarnCreds = heredoc.Doc(`
-	Warning: It is not recommended to use email and password.
-`)
-
 var AuthExamples = heredoc.Doc(`
 	zocli auth --help
 	zocli auth login -t
@@ -27,7 +23,7 @@ var StatusHelp = heredoc.Docf(`
 var LoginExample = heredoc.Doc(`
 	zocli auth login ( for interactive mode )
 
-	zocli auth login -b
+	// zocli auth login -b
 	zocli auth login -t
 	zocli auth login -c
 `)
@@ -37,11 +33,6 @@ var LoginHelp = heredoc.Docf(`
 
 			The default authentication mode is a token based authentication flow.
 			You can also provide token on standard input using %[1]s--token%[1]s
-			flag.
-
-			Alternatively, you can also use email and password to authenticate
-			with 01Cloud-host. You can also provide email and password on
-			standard input using %[1]sinteractive mode%[1]s and providing %[1]s--cred%[1]s
 			flag.
 
 			Alternatively, zocli will use the authentication token found in

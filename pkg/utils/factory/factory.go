@@ -6,6 +6,8 @@ import (
 	"os"
 	"runtime"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/berrybytes/zocli/internal/browser"
 	"github.com/berrybytes/zocli/internal/config"
@@ -13,6 +15,7 @@ import (
 	"github.com/berrybytes/zocli/pkg/utils/printer"
 	"github.com/berrybytes/zocli/pkg/utils/terminal"
 	cliBrowser "github.com/cli/browser"
+	// "github.com/sirupsen/logrus"
 )
 
 // Factory
@@ -57,14 +60,19 @@ type Factory struct {
 	Term terminal.Provider
 	IO   *iostreams.IOStreams
 
-	Debug   printer.DebugInterface
-	Printer printer.PrinterInterface
+	Debug      printer.DebugInterface
+	Printer    printer.PrinterInterface
+	Auth0Token string
 }
 
 type FactoryInterface interface {
 	createDefaultConfig()
 	CleanUp()
 	CleanUpTest()
+}
+
+type MyConfig struct {
+	Auth0Token string `yaml:"auth0_token"`
 }
 
 // New
@@ -120,13 +128,49 @@ func (f *Factory) CleanUpTest() {
 	}
 }
 
-func (f *Factory) GetAuth() map[string]string {
-	if f.UserWebToken != "" {
-		header := map[string]string{"X-PERSONAL-TOKEN": f.UserWebToken}
-		f.WebTokenUsed = true
-		return header
+// loadAuthFromDisk tries to populate Factory fields from ~/.01cloud/token.yaml
+func (f *Factory) loadAuthFromDisk() error {
+	path := f.Config.ConfigFolder + f.Config.AuthFile // e.g. /home/ash/.01cloud/token.yaml
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
 	}
+
+	// Only the fields we need to build headers
+	var cfg struct {
+		Email      string `yaml:"email"`
+		AuthToken  string `yaml:"token"`
+		WebToken   string `yaml:"xpersonaltoken"`
+		Auth0Token string `yaml:"auth0_token"`
+	}
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return err
+	}
+
+	if cfg.Auth0Token != "" {
+		f.Auth0Token = cfg.Auth0Token
+	}
+	if cfg.AuthToken != "" {
+		f.UserAuthToken = cfg.AuthToken
+	}
+	if cfg.Email != "" {
+		f.UserEmail = cfg.Email
+	}
+	return nil
+}
+
+func (f *Factory) GetAuth() map[string]string {
 	f.WebTokenUsed = false
-	header := map[string]string{"Authorization": "Basic " + f.UserAuthToken}
+
+	// Ensure tokens are loaded from disk if not already present in Factory
+	if f.Auth0Token == "" || f.UserAuthToken == "" {
+		_ = f.loadAuthFromDisk() // ignore error; downstream calls will handle missing auth
+	}
+
+	header := map[string]string{
+		"Authorization": "Basic " + f.UserAuthToken,
+		"X-CUSTOM-AUTH": f.Auth0Token,
+	}
+
 	return header
 }
